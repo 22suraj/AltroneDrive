@@ -253,11 +253,53 @@ const deleteAlbum = async (req, res) => {
   }
 };
 
+//---------------------------------------Filter Folder----------------------------------
+
+const filterFolder = async (req, res) => {
+  try {
+    const { folderName, token } = req.body;
+
+    if (!token) {
+      return res
+        .status(422)
+        .json({ status: false, message: "Token is not properly filled" });
+    }
+
+    const decoded = jwt.verify(token, "Altron");
+
+    var query = { folderName: RegExp("^" + folderName), userId: decoded._id };
+
+    const folders = await folderModel.find(query);
+
+    if (folders.length == 0) {
+      return res
+        .status(200)
+        .json({ status: true, message: "Folders doesn't exist" });
+    }
+
+    // const newFolder = new folderModel({
+    //   folderName: folderName,
+    //   userId: decoded._id,
+    // });
+
+    // const saveUser = await newFolder.save();
+
+    res.status(200).json({
+      status: true,
+      message: "Folders retrieved successfull",
+      data: folders,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   createFolder,
   fetchFolder,
   deleteFolder,
   createAlbum,
   fetchAlbum,
+  filterFolder,
   deleteAlbum,
 };

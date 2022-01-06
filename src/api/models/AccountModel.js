@@ -30,6 +30,12 @@ const loginSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    notification: {
+      type: String,
+    },
+    referalCode: {
+      type: String,
+    },
     token: {
       type: String,
       required: true,

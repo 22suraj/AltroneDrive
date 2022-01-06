@@ -11,6 +11,7 @@ router.post("/album/delete", folderController.deleteAlbum);
 
 //FETCH
 router.get("/folders", folderController.fetchFolder);
+router.post("/folder/filter", folderController.filterFolder);
 router.get("/albums", folderController.fetchAlbum);
 
 module.exports = router;

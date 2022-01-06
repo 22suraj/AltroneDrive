@@ -36,6 +36,8 @@ const register = async (req, res) => {
       DOB: "",
       profession: "",
       profileImage: "",
+      referalCode: "",
+      notification: "off",
       storage: 1000,
       email: email,
       password: password,
@@ -213,6 +215,68 @@ const updateUserImg = async (req, res) => {
   }
 };
 
+//---------------------------------Update Notification-----------------------------------------
+
+const updateUserNotification = async (req, res) => {
+  try {
+    const { notification, token } = req.body;
+
+    if (!notification || !token) {
+      return res
+        .status(200)
+        .json({ status: false, message: "Fields are not properly filled" });
+    }
+
+    const userExist = await loginModel.findOne({ token: token });
+
+    if (userExist) {
+      userExist.notification = notification;
+      userExist.save();
+      return res.status(200).json({
+        status: true,
+        message: "Successfully Updated",
+      });
+    } else {
+      return res
+        .status(200)
+        .json({ status: false, message: "Authentication Failed" });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//-----------------------------------Update Referal Code-------------------------------------
+
+const updateUserReferalCode = async (req, res) => {
+  try {
+    const { referalCode, token } = req.body;
+
+    if (!referalCode || !token) {
+      return res
+        .status(200)
+        .json({ status: false, message: "Fields are not properly filled" });
+    }
+
+    const userExist = await loginModel.findOne({ token: token });
+
+    if (userExist) {
+      userExist.referalCode = referalCode;
+      userExist.save();
+      return res.status(200).json({
+        status: true,
+        message: "Successfully Updated",
+      });
+    } else {
+      return res
+        .status(200)
+        .json({ status: false, message: "Authentication Failed" });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 //------------------------------------------------------------------------------------------
 const login_get_user_by_id = async (req, res) => {
   const specificUser = await login.findById({ _id: req.params.id });
@@ -225,6 +289,8 @@ module.exports = {
   login_get_user_by_id,
   loginUser,
   updateUser,
+  updateUserNotification,
   updateUserImg,
+  updateUserReferalCode,
   userInfo,
 };
