@@ -66,6 +66,43 @@ const register = async (req, res) => {
 //--------------------Login User-----------------------//
 const loginUser = async (req, res) => {
   try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(200)
+        .json({ status: true, message: "Fields are not properly filled" });
+    }
+
+    const userExist = await loginModel.findOne({ email: email });
+
+    if (userExist) {
+      const isMatch = await bcrypt.compare(password, userExist.password);
+      if (isMatch) {
+        const token = await userExist.generateAuthToken();
+        userExist.token = token;
+        userExist.save();
+        return res.status(200).json({
+          status: true,
+          message: "Successfully Login",
+          token: { access: token },
+        });
+      } else {
+        return res
+          .status(200)
+          .json({ status: false, message: "Password doesn't match" });
+      }
+    } else {
+      return res.status(200).json({ status: false, message: "User not found" });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+//----------------------------------Login controller of EJS -------------------------
+const loginEJSUser = async (req, res) => {
+  try {
     console.log(req.body);
     const { email, password } = req.body;
     console.log(email);
